@@ -31,6 +31,7 @@ contract DSCEngine is ReentrancyGuard {
     error DSCEngine__TokenNotAllowed(address token);
     error DSCEngine__TransferFailed();
     error DSCEngine__BreaksHealthFactor(uint256 healthFactorValue);
+    error DSCEngine__MintFailed();
 
     mapping(address token => address priceFeed) private s_priceFeeds;
     mapping(address user => mapping(address collateralToken => uint256 amount)) private s_collateralDeposited;
@@ -105,6 +106,12 @@ contract DSCEngine is ReentrancyGuard {
     ) external moreThanZero(amount) nonReentrant {
         s_DSCMinted[msg.sender] += amount;
         revertIfHealthFactorIsBroken(msg.sender);
+
+        bool minted = i_dsc.mint(msg.sender, amount);
+
+        if (minted != true) {
+            revert DSCEngine__MintFailed();
+        }
     }
 
     function burnDsc() external {}
