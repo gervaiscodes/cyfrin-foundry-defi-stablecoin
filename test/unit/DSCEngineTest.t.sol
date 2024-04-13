@@ -3,6 +3,7 @@
 pragma solidity ^0.8.19;
 
 import {Test} from "forge-std/Test.sol";
+import { ERC20Mock } from "@openzeppelin/contracts/mocks/token/ERC20Mock.sol";
 import { DeployDSC } from "../../script/DeployDSC.s.sol";
 import { HelperConfig } from "../../script/HelperConfig.s.sol";
 import { DecentralizedStablecoin } from "../../src/DecentralizedStablecoin.sol";
@@ -19,10 +20,19 @@ contract DSCEngineTest is Test {
     address public wbtc;
     uint256 public deployerKey;
 
+    uint256 amountCollateral = 10 ether;
+
+    uint256 public constant STARTING_USER_BALANCE = 10 ether;
+
+    address public user = makeAddr("user");
+
     function setUp() external {
         DeployDSC deployer = new DeployDSC();
         (dsc, dsce, helperConfig) = deployer.run();
         (ethUsdPriceFeed, btcUsdPriceFeed, weth, wbtc, deployerKey) = helperConfig.activeNetworkConfig();
+
+        ERC20Mock(weth).mint(user, STARTING_USER_BALANCE);
+        ERC20Mock(wbtc).mint(user, STARTING_USER_BALANCE);
     }
 
     function testGetUsdValue() public view {
@@ -31,5 +41,15 @@ contract DSCEngineTest is Test {
         uint256 expectedUsd = 30_000e18;
         uint256 usdValue = dsce.getUsdValue(weth, ethAmount);
         assertEq(usdValue, expectedUsd);
+    }
+
+
+    function testRevertsIfCollateralZero() public {
+        vm.startPrank(user);
+        ERC20Mock(weth).approve(address(dsce), amountCollateral);
+
+        vm.expectRevert(DSCEngine.DSCEngine__NeedsMoreThanZero.selector);
+        dsce.depositCollateral(weth, 0);
+        vm.stopPrank();
     }
 }
