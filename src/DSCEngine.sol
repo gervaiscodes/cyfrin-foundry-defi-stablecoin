@@ -49,6 +49,7 @@ contract DSCEngine is ReentrancyGuard {
     uint256 private constant FEED_PRECISION = 1e8;
 
     event CollateralDeposited(address indexed user, address indexed token, uint256 indexed amount);
+    event CollateralRedeemed(address indexed user, address token, uint256 amount);
 
     modifier moreThanZero(uint256 amount) {
         if (amount <= 0) {
@@ -106,7 +107,22 @@ contract DSCEngine is ReentrancyGuard {
 
     function redeemCollateralForDsc() external {}
 
-    function redeemCollateral() external {}
+    function redeemCollateral(
+        address tokenCollateralAddress,
+        uint256 collateralAmount
+    ) external moreThanZero(collateralAmount) nonReentrant {
+        s_collateralDeposited[msg.sender][tokenCollateralAddress] -= collateralAmount;
+
+        emit CollateralRedeemed(msg.sender, tokenCollateralAddress, collateralAmount);
+
+        bool success = IERC20(tokenCollateralAddress).transfer(msg.sender, collateralAmount);
+
+        if(!success) {
+            revert DSCEngine__TransferFailed();
+        }
+
+        revertIfHealthFactorIsBroken(msg.sender);
+    }
 
     function mintDsc(
         uint256 amount
