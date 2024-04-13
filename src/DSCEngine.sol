@@ -105,12 +105,20 @@ contract DSCEngine is ReentrancyGuard {
         }
     }
 
-    function redeemCollateralForDsc() external {}
+    function redeemCollateralForDsc(
+        address tokenCollateralAddress,
+        uint256 collateralAmount,
+        uint256 amountDscToBurn
+    ) external {
+        burnDsc(amountDscToBurn);
+        redeemCollateral(tokenCollateralAddress, collateralAmount);
+        // redeem collateral already checks health factor
+    }
 
     function redeemCollateral(
         address tokenCollateralAddress,
         uint256 collateralAmount
-    ) external moreThanZero(collateralAmount) nonReentrant {
+    ) public moreThanZero(collateralAmount) nonReentrant {
         s_collateralDeposited[msg.sender][tokenCollateralAddress] -= collateralAmount;
 
         emit CollateralRedeemed(msg.sender, tokenCollateralAddress, collateralAmount);
