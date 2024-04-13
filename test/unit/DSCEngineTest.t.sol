@@ -43,7 +43,6 @@ contract DSCEngineTest is Test {
         assertEq(usdValue, expectedUsd);
     }
 
-
     function testRevertsIfCollateralZero() public {
         vm.startPrank(user);
         ERC20Mock(weth).approve(address(dsce), amountCollateral);

@@ -79,10 +79,17 @@ contract DSCEngine is ReentrancyGuard {
         i_dsc = DecentralizedStablecoin(dscAddress);
     }
 
-    function depositCollateralAndMintDsc() external {}
+    function depositCollateralAndMintDsc(
+        address tokenCollateralAddress,
+        uint256 amountCollateral,
+        uint256 amountDscToMint
+    ) external {
+        depositCollateral(tokenCollateralAddress, amountCollateral);
+        mintDsc(amountDscToMint);
+    }
 
     function depositCollateral(address token, uint256 amount)
-        external
+        public
         moreThanZero(amount)
         isAllowedToken(token)
         nonReentrant
@@ -103,7 +110,7 @@ contract DSCEngine is ReentrancyGuard {
 
     function mintDsc(
         uint256 amount
-    ) external moreThanZero(amount) nonReentrant {
+    ) public moreThanZero(amount) nonReentrant {
         s_DSCMinted[msg.sender] += amount;
         revertIfHealthFactorIsBroken(msg.sender);
 
