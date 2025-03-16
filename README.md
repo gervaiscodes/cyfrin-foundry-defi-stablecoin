@@ -1,5 +1,8 @@
 # Decentralized Stablecoin (DSC)
 
+
+![Tests badge](https://github.com/gervaiscodes/cyfrin-foundry-defi-stablecoin/actions/workflows/test.yml/badge.svg)
+
 ## Overview
 
 The Decentralized Stablecoin (DSC) project is a DeFi stablecoin system that allows users to deposit collateral in the form of WETH (Wrapped Ether) and WBTC (Wrapped Bitcoin) in exchange for a token pegged to the USD. The system is designed to maintain a 1:1 peg to the USD while ensuring that all issued DSC tokens are always overcollateralized.
