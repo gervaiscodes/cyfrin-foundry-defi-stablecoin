@@ -1,66 +1,51 @@
-## Foundry
+## Foundry DeFi Stablecoin
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+https://updraft.cyfrin.io/courses/advanced-foundry
 
-Foundry consists of:
+This project is meant to be a stablecoin where users can deposit WETH and WBTC in exchange for a token that will be pegged to the USD.
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
-
-## Documentation
-
-https://book.getfoundry.sh/
+* The system is designed to be as minimal as possible, and have the tokens maintain a 1 token == $1 peg at all times.
+* This is a stablecoin with the properties:
+  * Exogenously Collateralized
+  * Dollar Pegged
+  * Algorithmically Stable
+* It is similar to DAI if DAI had no governance, no fees, and was backed by only WETH and WBTC.
+* Our DSC system should always be "overcollateralized". At no point, should the value of all collateral < the $ backed value of all the DSC.
 
 ## Usage
 
 ### Build
 
 ```shell
-$ forge build
+$ make build
 ```
 
 ### Test
 
 ```shell
-$ forge test
+$ make test
 ```
 
 ### Format
 
 ```shell
-$ forge fmt
+$ make format
 ```
 
 ### Gas Snapshots
 
 ```shell
-$ forge snapshot
+$ make snapshot
 ```
 
 ### Anvil
 
 ```shell
-$ anvil
+$ make anvil
 ```
 
 ### Deploy
 
 ```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
+$ make deploy
 ```
